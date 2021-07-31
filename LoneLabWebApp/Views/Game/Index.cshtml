@@ -1,4 +1,7 @@
-﻿<script>
+﻿<div>
+    <span id="userList"></span>
+</div>
+<script>
     const userName = prompt('Enter your user name', '');
     window.onload = init;
     window.onbeforeunload = closing;
@@ -23,3 +26,5 @@
         fetch(document.URL + '/removeuser?username=' + userName, options);
     };
 </script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/userList.js"></script>
