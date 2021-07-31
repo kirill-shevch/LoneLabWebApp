@@ -1,2 +1,25 @@
-﻿
+﻿<script>
+    const userName = prompt('Enter your user name', '');
+    window.onload = init;
+    window.onbeforeunload = closing;
 
+    function init() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        fetch(document.URL + '/adduser?username=' + userName, options);
+    };
+
+    function closing() {
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        fetch(document.URL + '/removeuser?username=' + userName, options);
+    };
+</script>

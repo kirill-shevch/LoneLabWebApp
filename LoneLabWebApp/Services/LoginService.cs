@@ -10,7 +10,6 @@ namespace LoneLabWebApp.Services
         public void AddUserName(string userName)
         {
             _userNames.Add(userName);
-            throw new NotImplementedException();
         }
 
         public List<string> GetUserNames()
