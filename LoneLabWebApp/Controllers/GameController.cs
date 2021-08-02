@@ -23,7 +23,7 @@ namespace LoneLabWebApp.Controllers
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpPost]
         public IActionResult RemoveUser(string userName)
         {
             _loginService.RemoveUserName(userName);
