@@ -1,5 +1,6 @@
 ﻿using LoneLabWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LoneLabWebApp.Controllers
 {
@@ -17,16 +18,16 @@ namespace LoneLabWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUser(string userName)
+        public async Task<IActionResult> AddUser(string userName)
         {
-            _loginService.AddUserName(userName);
+            await _loginService.AddUserName(userName);
             return Ok();
         }
 
         [HttpPost]
-        public IActionResult RemoveUser(string userName)
+        public async Task<IActionResult> RemoveUser(string userName)
         {
-            _loginService.RemoveUserName(userName);
+            await _loginService.RemoveUserName(userName);
             return Ok();
         }
     }

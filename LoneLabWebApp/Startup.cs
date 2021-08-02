@@ -1,5 +1,5 @@
-using LoneLabWebApp.Hubs;
 using LoneLabWebApp.Services;
+using LoneLabWebApp.Services.Hubs;
 using LoneLabWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +23,7 @@ namespace LoneLabWebApp
         {
             services.AddControllersWithViews();
             services.AddSingleton<ILoginService, LoginService>();
+            services.AddSingleton<UserListHub>();
             services.AddSignalR();
         }
 

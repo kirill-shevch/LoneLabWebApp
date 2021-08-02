@@ -1,32 +1,40 @@
 ﻿<div>
     <span id="userList"></span>
 </div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
-    const userName = prompt('Enter your user name', '');
-    window.onload = init;
-    window.onbeforeunload = closing;
+
+        const userName = prompt('Enter your user name', '');
+        window.onload = init;
+        window.onbeforeunload  = closing;
 
     function init() {
-        console.log('User created!');
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
-        fetch(document.URL + '/adduser?username=' + userName, options);
-    };
+        "use strict";
 
-    function closing() {
-        console.log('User removed!');
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+        var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
+
+        connection.on("ReceiveUserList", function (users) {
+            document.getElementById("userList").textContent = users;
+        });
+        connection.start().then(function () {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            fetch(document.URL + '/adduser?username=' + userName, options);
+        });
         };
-        fetch(document.URL + '/removeuser?username=' + userName, options);
-    };
+
+        function closing() {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            fetch(document.URL + '/removeuser?username=' + userName, options);
+        };
+        
 </script>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/userList.js"></script>

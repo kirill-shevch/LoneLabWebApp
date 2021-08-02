@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LoneLabWebApp.Services.Interfaces
 {
     public interface ILoginService
     {
-        public void AddUserName(string userName);
+        public Task AddUserName(string userName);
 
-        public void RemoveUserName(string userName);
-
-        public List<string> GetUserNames();
+        public Task RemoveUserName(string userName);
     }
 }
