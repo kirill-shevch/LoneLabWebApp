@@ -1,5 +1,5 @@
 ﻿<div>
-    <span id="userList"></span>
+    <ul id="userList"></ul>
     <canvas id="canvas" width=500px heigth=500px style="border: 1px solid black;"></canvas>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -10,11 +10,8 @@
     var topY = 10;
     var length = 20;
     var height = 20;
-    var color = getRandomColor();
 
     const userName = prompt('Enter your user name', '');
-    ctx.fillStyle = color;
-    ctx.fillRect(topX, topY, length, height);
     document.addEventListener("keydown", keyDownTextField, false);
     window.onload = init;
     window.onbeforeunload  = closing;
@@ -25,7 +22,7 @@
         var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
 
         connection.on("ReceiveUserList", function (users) {
-            document.getElementById("userList").textContent = users;
+            setUserList(users);
         });
         connection.start().then(function () {
             const options = {
@@ -47,6 +44,20 @@
         };
         fetch(document.URL + '/removeuser?username=' + userName, options);
     };
+
+    function setUserList(users) {
+        var ul = document.getElementById("userList");
+        ul.innerHTML = "";
+        Object.keys(users).forEach(function (key) {
+            var value = users[key];
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(key));
+            li.style.color = value.color;
+            ctx.fillStyle = value.color;
+            ctx.fillRect(topX, topY, length, height);
+            ul.appendChild(li);
+        });
+    }
 
     function keyDownTextField(e) {
         var keyCode = e.keyCode;
@@ -70,15 +81,5 @@
             topY -= 5;
             ctx.fillRect(topX, topY, length, height);
         }
-    }
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-        
+    }        
 </script>

@@ -1,4 +1,5 @@
-﻿using LoneLabWebApp.Services.Interfaces;
+﻿using LoneLabWebApp.Models;
+using LoneLabWebApp.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,9 +12,9 @@ namespace LoneLabWebApp.Services.Hubs
         {
         }
 
-        public async Task SendUserList(List<string> userNames)
+        public async Task SendUserList(Dictionary<string, Player> userNames)
         {
-            await Clients?.All.SendAsync("ReceiveUserList", string.Join(", ", userNames));
+            await Clients?.All.SendAsync("ReceiveUserList", userNames);
         }
     }
 }
