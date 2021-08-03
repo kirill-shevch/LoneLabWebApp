@@ -4,26 +4,23 @@
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
     var canvas = document.getElementById("canvas");
     var ctx = canvas.getContext("2d");
-    var topX = 10;
-    var topY = 10;
-    var length = 20;
-    var height = 20;
-
+    var topX = 0;
+    var topY = 0;
     const userName = prompt('Enter your user name', '');
     document.addEventListener("keydown", keyDownTextField, false);
     window.onload = init;
-    window.onbeforeunload  = closing;
+    window.onbeforeunload = closing;
+
+    connection.on("ReceiveUserList", function (users) {
+        setUserList(users);
+    });
 
     function init() {
         "use strict";
 
-        var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
-
-        connection.on("ReceiveUserList", function (users) {
-            setUserList(users);
-        });
         connection.start().then(function () {
             const options = {
                 method: 'POST',
@@ -48,13 +45,16 @@
     function setUserList(users) {
         var ul = document.getElementById("userList");
         ul.innerHTML = "";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        topX = users[userName].x;
+        topY = users[userName].y
         Object.keys(users).forEach(function (key) {
             var value = users[key];
             var li = document.createElement("li");
             li.appendChild(document.createTextNode(key));
             li.style.color = value.color;
             ctx.fillStyle = value.color;
-            ctx.fillRect(topX, topY, length, height);
+            ctx.fillRect(value.x, value.y, 20, 20);
             ul.appendChild(li);
         });
     }
@@ -62,24 +62,20 @@
     function keyDownTextField(e) {
         var keyCode = e.keyCode;
         if (keyCode == 83) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             topY += 5;
-            ctx.fillRect(topX, topY, length, height);
+            connection.invoke("SetCoordinate", userName, topX, topY);
         }
         else if (keyCode == 68) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             topX += 5;
-            ctx.fillRect(topX, topY, length, height);
+            connection.invoke("SetCoordinate", userName, topX, topY);
         }
         else if (keyCode == 65) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             topX -= 5;
-            ctx.fillRect(topX, topY, length, height);
+            connection.invoke("SetCoordinate", userName, topX, topY);
         }
         else if (keyCode == 87) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             topY -= 5;
-            ctx.fillRect(topX, topY, length, height);
+            connection.invoke("SetCoordinate", userName, topX, topY);
         }
-    }        
+    }
 </script>

@@ -1,4 +1,4 @@
-﻿using LoneLabWebApp.Services.Interfaces;
+﻿using LoneLabWebApp.Services.Hubs;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -6,10 +6,10 @@ namespace LoneLabWebApp.Controllers
 {
     public class GameController : Controller
     {
-        private readonly ILoginService _loginService;
-        public GameController(ILoginService loginService)
+        private readonly UserListHub _userListHub;
+        public GameController(UserListHub userListHub)
         {
-            _loginService = loginService;
+            _userListHub = userListHub;
         }
 
         public IActionResult Index()
@@ -20,14 +20,14 @@ namespace LoneLabWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddUser(string userName)
         {
-            await _loginService.AddUserName(userName);
+            await _userListHub.AddUserName(userName);
             return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> RemoveUser(string userName)
         {
-            await _loginService.RemoveUserName(userName);
+            await _userListHub.RemoveUserName(userName);
             return Ok();
         }
     }
