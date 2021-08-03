@@ -1,21 +1,26 @@
 ﻿<div>
-    <span id="userList"></span>
+    <ul id="userList"></ul>
+    <canvas id="canvas" width=500px heigth=500px style="border: 1px solid black;"></canvas>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var topX = 0;
+    var topY = 0;
+    const userName = prompt('Enter your user name', '');
+    document.addEventListener("keydown", keyDownTextField, false);
+    window.onload = init;
+    window.onbeforeunload = closing;
 
-        const userName = prompt('Enter your user name', '');
-        window.onload = init;
-        window.onbeforeunload  = closing;
+    connection.on("ReceiveUserList", function (users) {
+        setUserList(users);
+    });
 
     function init() {
         "use strict";
 
-        var connection = new signalR.HubConnectionBuilder().withUrl("/userListHub").build();
-
-        connection.on("ReceiveUserList", function (users) {
-            document.getElementById("userList").textContent = users;
-        });
         connection.start().then(function () {
             const options = {
                 method: 'POST',
@@ -25,16 +30,52 @@
             };
             fetch(document.URL + '/adduser?username=' + userName, options);
         });
-        };
+    };
 
-        function closing() {
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            };
-            fetch(document.URL + '/removeuser?username=' + userName, options);
+    function closing() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
         };
-        
+        fetch(document.URL + '/removeuser?username=' + userName, options);
+    };
+
+    function setUserList(users) {
+        var ul = document.getElementById("userList");
+        ul.innerHTML = "";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        topX = users[userName].x;
+        topY = users[userName].y
+        Object.keys(users).forEach(function (key) {
+            var value = users[key];
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(key));
+            li.style.color = value.color;
+            ctx.fillStyle = value.color;
+            ctx.fillRect(value.x, value.y, 20, 20);
+            ul.appendChild(li);
+        });
+    }
+
+    function keyDownTextField(e) {
+        var keyCode = e.keyCode;
+        if (keyCode == 83) {
+            topY += 5;
+            connection.invoke("SetCoordinate", userName, topX, topY);
+        }
+        else if (keyCode == 68) {
+            topX += 5;
+            connection.invoke("SetCoordinate", userName, topX, topY);
+        }
+        else if (keyCode == 65) {
+            topX -= 5;
+            connection.invoke("SetCoordinate", userName, topX, topY);
+        }
+        else if (keyCode == 87) {
+            topY -= 5;
+            connection.invoke("SetCoordinate", userName, topX, topY);
+        }
+    }
 </script>
