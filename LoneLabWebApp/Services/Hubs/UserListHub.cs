@@ -13,7 +13,7 @@ namespace LoneLabWebApp.Services.Hubs
 
         public async Task SendUserList(List<string> userNames)
         {
-            await Clients.All.SendAsync("ReceiveUserList", string.Join(", ", userNames));
+            await Clients?.All.SendAsync("ReceiveUserList", string.Join(", ", userNames));
         }
     }
 }
